@@ -1,0 +1,38 @@
+
+INCLUDE /path/to/main_lvs_file
+
+//======================
+//===  INPUT-LAYERS  ===
+//======================
+
+LAYER MAP	109		DATATYPE	0	1272
+LAYER BottomElectrode		1272		// Bottom Electrode (RRAM)
+LAYER MAP	110		DATATYPE	0	1273
+LAYER MetalOxide		1273		// Metal Oxide (RRAM)
+LAYER MAP	126		DATATYPE	0	1274
+LAYER TopElectrode		1274		// Top Electrode (RRAM) 
+
+
+// ====================================================
+// == Top and Bottom Electrode Pad layers derivation ==
+// ====================================================
+
+TopElectrodeTME = ( TOP_M_C INSIDE TopElectrode ) OUTSIDE MetalOxide
+BottomElectrodeTME = TOP_M_C INSIDE BottomElectrode
+
+RRAM_cell = ( BottomElectrode AND MetalOxide ) AND TopElectrode
+
+
+// =======================================
+// == Establish RRAM Layer Connectivity ==
+// =======================================
+
+CONNECT TOP_M_C BottomElectrode BY BottomElectrodeTME
+CONNECT TOP_M_C TopElectrode BY TopElectrodeTME
+
+
+// ==============================
+// == RRAM element recognition ==
+// ==============================
+
+DEVICE  D(RRAM)  RRAM_cell  TopElectrode(POS)  BottomElectrode(NEG)

@@ -1,0 +1,9 @@
+
+load( "/path/to/main_drf_file" )
+
+drDefinePacket(
+;( DisplayName  PacketName           Stipple    LineStyle  Fill       Outline    [FillStyle])
+ ( display      TopElectrode         vLine      solid      red        red        outlineStipple)
+ ( display      BottomElectrode      hLine      solid      green      green      outlineStipple)
+ ( display      MetalOxide           backSlash  solid      silver     silver     outlineStipple)
+)

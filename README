@@ -1,0 +1,95 @@
+
+
+*************************************************************************************
+****************************     RRAM_CMOS_DK readme     ****************************
+*************************************************************************************
+
+
+         ¸,ø¤º°`°º¤ø,¸¸,ø¤º°  LNIS at University of Utah  °º¤ø,¸¸,ø¤º°`°º¤ø,¸
+                           Prof. Pierre-Emmanuel Gaillardon
+                          pierre-emmanuel.gaillardon@utah.edu
+
+
+=====================================================================================
+Version 1.0 (08/03/2016) by Armando Biscontini: First release
+-------------------------------------------------------------------------------------
+Version 1.1 (08/04/2016) by Armando Biscontini, Maxime Thammasack: Major bugs on
+Calibre DRC and LVS rules fixed, DRM added
+=====================================================================================
+
+
+- DISCLAIMER -
+
+This program is free software. It comes without any warranty, to
+the extent permitted by applicable law. You can redistribute it
+and/or modify it under the terms of the GNU Lesser General Public License, Version 3.
+See https://www.gnu.org/licenses/lgpl-3.0.txt for more details.
+
+
+- INTRODUCTION -
+
+This design kit provides support for the design of RRAM structures with 180nm CMOS process.
+Use the Metal 6 layer to contact the TE and BE electrode of each memory cell.
+The connection with the underlying metal layer (ME5) is possible only using vias (VI5) placed under the ME6 electrodes. 
+A Design Rules Manual and a standard RRAM cell are provided to show the correct design approach.
+Before starting to use the DK, you have to go through the following INSTALLATION section. 
+
+
+ - INSTALLATION -
+
+RRAM_CMOS_DK installation has been tested on Cadence Virtuoso 6.1.6-64b.
+The installation procedure can slightly change if you are using other versions of Cadence.
+It is recommended to start with a clean installation of the 180nm design kit.
+Perform "chmod 755 ./* -R" in the design kit folder to adjust the permissions on all the files.
+
+1. Merge the Technology Files:
+- open the RRAM technology file (RRAM_CMOS_DK/RRAM.tf); at the line:
+include( "/path/to/main_tech_file" )
+replace "/path/to/main_tech_file" with the absolute path of your 180nm technology file.
+
+2. Merge the Display Resource Files:
+- open the RRAM drf file (RRAM_CMOS_DK/RRAM.drf); at the line:
+load( "/path/to/main_drf_file" )
+replace "/path/to/main_drf_file" with the absolute path of your 180nm drf file;
+- copy the edited RRAM.drf to the Cadence run directory and rename it to "display.drf";
+- in case you already started Cadence Virtuoso, you can go in Tools -> Display Resource Manager -> Edit; select File -> Reinitialize and confirm; in this way you are going to reload the drf.
+
+3. Import RRAM_CMOS_Lib in Cadence:
+- in the main window of Cadence Virtuoso, go to Tools -> Library Path Editor;
+- go to Edit -> Add Library; select the RRAM_CMOS_Lib (RRAM_CMOS_DK/RRAM_CMOS_Lib) and confirm;
+- coming back to the "Library Path Editor" window, go to File -> Save;
+This procedure is adding the RRAM library to your Library Manager.
+
+4. Load the edited tech file in Cadence:
+- in the main window of Cadence Virtuoso, go to Tools -> Technology File Manager -> Load;
+- select the edited tech file at point 1 (RRAM_CMOS_DK/RRAM.tf) in the "ASCII Technology File" field;
+- select the technology library RRAM_CMOS_Lib (RRAM_CMOS_DK/RRAM_CMOS_Lib) in the "Technology Library" field;
+- make sure the options "Select all" and "Replace" are selected;
+- click "OK" and confirm.
+
+5. Merge the Layer Map files:
+- append the content of the layermap file of your 180nm design kit to the RRAM_CMOS_DK layermap file (RRAM_CMOS_DK/RRAM_CMOS_Lib/RRAM_CMOS_Lib.layermap);
+you can do this by hand or using a simple bash command as: cat layermap2 >> layermap1. In this way, you are going to append layermap2 to layermap1;
+The layermap file is usually placed in your 180nm library and has extensions like ".layermap" or ".map".
+
+6. Merge the Calibre DRC rules:
+- open the RRAM DRC file (RRAM_CMOS_DK/Rulefiles/Calibre/DRC/RRAM_drc.cal); at the line:
+INCLUDE /path/to/main_drc_file
+replace "/path/to/main_drc_file" with the absolute path of your 180nm DRC file;
+- now the Calbre DRC routine is going to check the layout constaints on both CMOS and RRAM elements when you load the RRAM DRC rules (RRAM_drc.cal).
+
+7. Merge the Calibre LVS rules:
+- open the RRAM LVS file (RRAM_CMOS_DK/Rulefiles/Calibre/LVS/RRAM_lvs.cal); at the line:
+INCLUDE /path/to/main_lvs_file 
+replace "/path/to/main_lvs_file" with the absolute path of your 180nm LVS file;
+- now the Calbre LVS routine is going to check the layout vs schematic corrispondence on both CMOS and RRAM elements when you load the RRAM LVS rules (RRAM_lvs.cal).
+
+8. Restart Cadence to make all the changes effective.
+
+
+ - USE -
+
+Only after the installation procedure, cells can be correctly designed using the RRAM_CMOS_Lib.
+It is possible to attach design libraries to it.
+You can perform the DRC and LVS check on your design loading the correct RRAM Calibre rules.
+

@@ -1,0 +1,139 @@
+
+INCLUDE /path/to/main_drc_file
+
+//======================
+//===  INPUT-LAYERS  ===
+//======================
+
+LAYER MAP	109		DATATYPE	0	1272
+LAYER BottomElectrode		1272		// Bottom Electrode (RRAM)
+LAYER MAP	110		DATATYPE	0	1273
+LAYER MetalOxide		1273		// Metal Oxide (RRAM)
+LAYER MAP	126		DATATYPE	0	1274
+LAYER TopElectrode		1274		// Top Electrode (RRAM)
+LAYER MAP	77		DATATYPE	1	1275
+LAYER M6DUMY_BLOCK		1275		// Top Electrode (RRAM)
+
+
+// ====================================================
+// == Top and Bottom Electrode Pad layers derivation ==
+// ====================================================
+
+TopElectrodeME6 = ( ME6_C INSIDE TopElectrode ) OUTSIDE MetalOxide
+BottomElectrodeME6 = ME6_C INSIDE BottomElectrode
+BadElectrodeME6 = ME6_C NOT ( TopElectrodeME6 OR BottomElectrodeME6 )
+OtherME6 = BadElectrodeME6 NOT INTERACT TopElectrode
+
+
+// ========================
+// == DRC rules for RRAM ==
+// ========================
+
+
+// Bottom Electrode ME6 rules
+
+  RRAM.BE_ME6.1 { @ BottomElectrodeME6 and BottomElectrode have coincident edges.
+     BottomElectrodeME6 COINCIDENT EDGE BottomElectrode             
+  }
+  
+  RRAM.BE_ME6.2 { @ Minimum spacing between BottomElectrodeME6 and BottomElectrode is 1um.
+     BottomElectrodeME6 ENCLOSURE BottomElectrode < 1                   
+  }               
+
+
+// Top Electrode ME6 rules
+
+  RRAM.TE_ME6.1 { @ TopElectrodeME6 and TopElectrode have coincident edges.
+     TopElectrodeME6 COINCIDENT EDGE TopElectrode             
+  } 
+
+  RRAM.TE_ME6.2 { @ Minimum spacing between TopElectrodeME6 and TopElectrode is 1um.
+     TopElectrodeME6 ENCLOSURE TopElectrode < 1                   
+  }
+
+  RRAM.TE_ME6.3 { @ TopElectrodeME6 and MetalOxide have coincident edges.
+     TopElectrodeME6 COINCIDENT EDGE MetalOxide
+  }
+
+  RRAM.TE_ME6.4 { @ Minimum spacing between TopElectrodeME6 and MetalOxide is 1um.
+     TopElectrodeME6 EXTERNAL MetalOxide < 1            
+  }
+
+
+// Bottom Electrode rules
+  
+  RRAM.BE.1 { @ Minimum width for BottomElectrode is 1um.
+     INTERNAL BottomElectrode < 1                
+  }
+
+  RRAM.BE.2 { @ BottomElectrode has to be entirely included in MetalOxide.
+     BottomElectrode NOT INSIDE MetalOxide                   
+  }
+
+  RRAM.BE.3 { @ BottomElectrode and MetalOxide have coincident edges.
+     BottomElectrode COINCIDENT EDGE MetalOxide
+  }
+
+  RRAM.BE.4 { @ Minimum spacing between BottomElectrode and MetalOxide is 1um.
+     BottomElectrode ENCLOSURE MetalOxide < 1                   
+  }
+
+  RRAM.BE.5 { @ Minimum spacing between BottomElectrode shapes is 1um.
+     EXTERNAL BottomElectrode < 1                  
+  }
+
+
+// Metal Oxide rules
+  
+  RRAM.OX.1 { @ Minimum width for MetalOxide is 1um.
+     INTERNAL MetalOxide < 1                
+  }
+
+  RRAM.OX.2 { @ MetalOxide has to be entirely included in TopElectrode.
+     MetalOxide NOT INSIDE TopElectrode                   
+  }
+  
+  RRAM.OX.3 { @ MetalOxide and TopElectrode have coincident edges.
+     MetalOxide COINCIDENT EDGE TopElectrode
+  }
+
+  RRAM.OX.4 { @ Minimum spacing between MetalOxide and TopElectrode is 1um.
+     MetalOxide ENCLOSURE TopElectrode < 1                   
+  }
+
+
+// Top Electrode rules
+
+  RRAM.TE.1 { @ Minimum width for TopElectrode is 1um.
+     INTERNAL TopElectrode < 1                
+  }
+
+  RRAM.TE.2 { @ Minimum spacing between TopElectrode shapes is 1um.
+     EXTERNAL TopElectrode < 1                  
+  }
+
+
+// ME6 Dummy Block rules
+
+  RRAM.M6DUMBLK.1 { @ TopElectrode has to be entirely included in ME6 Dummy Block.
+     TopElectrode NOT INSIDE M6DUMY_BLOCK                   
+  }
+
+  RRAM.M6DUMBLK.2 { @ TopElectrode and ME6 Dummy Block have coincident edges.
+     TopElectrode COINCIDENT EDGE M6DUMY_BLOCK
+  }
+
+  RRAM.M6DUMBLK.3 { @ Minimum spacing between TopElectrode and ME6 Dummy Block is 2um.
+     TopElectrode ENCLOSURE M6DUMY_BLOCK < 2                  
+  }
+
+
+// ME6 rules
+
+  RRAM.ME6.1 { @ ME6 is badly placed.  It cannot be properly recognized as TE or BE electrode.
+     BadElectrodeME6 INTERACT TopElectrode           
+  }
+
+  RRAM.ME6.2 { @ Minimum spacing between ME6 and TopElectrode is 2um.
+     OtherME6 EXTERNAL TopElectrode < 2            
+  }
